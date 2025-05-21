@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ArtEvo Backend
 
-## Getting Started
+## Deskripsi Proyek
+ArtEvo Backend adalah layanan backend yang menyediakan API untuk manajemen user, autentikasi, dan data terkait aplikasi ArtEvo. Backend ini menggunakan Next.js API Routes dengan koneksi database MySQL dan autentikasi menggunakan JWT.
 
-First, run the development server:
+## Fitur
+- Registrasi user dengan validasi dan hashing password
+- Login user dengan verifikasi password dan token JWT
+- Mendapatkan dan memperbarui profil user dengan autentikasi token
+- Endpoint untuk mengetes koneksi database dan mengambil data contoh
+- Middleware autentikasi dan pengecekan role user
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Teknologi
+- Node.js
+- Next.js API Routes
+- MySQL dengan mysql2/promise
+- JSON Web Token (JWT)
+- bcryptjs untuk hashing password
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Instalasi
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. Clone repository ini:
+   ```
+   git clone <repository-url>
+   cd backend
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-## Learn More
+3. Buat file `.env` di root project dan isi variabel lingkungan berikut:
+   ```
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=yourpassword
+   DB_NAME=artevo_db
+   DB_PORT=3306
+   JWT_SECRET=your_jwt_secret_key
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Jalankan server development:
+   ```
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Struktur Folder
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app/api/` - Folder berisi API routes
+  - `auth/` - Endpoint autentikasi (register, login)
+  - `users/profile/` - Endpoint untuk profile user
+  - `test-db/` - Endpoint untuk mengetes koneksi database
+- `src/lib/` - Library utilitas seperti koneksi database dan autentikasi
 
-## Deploy on Vercel
+## Endpoint API
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Registrasi User
+- URL: `/api/auth/register`
+- Method: POST
+- Body:
+  ```json
+  {
+    "name": "Nama User",
+    "email": "email@example.com",
+    "password": "password123",
+    "role": "buyer" // atau "seller"
+  }
+  ```
+- Response:
+  - Success: 201 Created dengan data user dan token JWT
+  - Error: 400 Bad Request jika validasi gagal
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Login User
+- URL: `/api/auth/login`
+- Method: POST
+- Body:
+  ```json
+  {
+    "email": "email@example.com",
+    "password": "password123"
+  }
+  ```
+- Response:
+  - Success: 200 OK dengan data user dan token JWT
+  - Error: 401 Unauthorized jika email atau password salah
+
+### Get Profile User
+- URL: `/api/users/profile`
+- Method: GET
+- Headers:
+  - Authorization: Bearer {token}
+- Response:
+  - Success: 200 OK dengan data profile user
+  - Error: 401 Unauthorized jika token tidak valid
+
+### Update Profile User
+- URL: `/api/users/profile`
+- Method: PUT
+- Headers:
+  - Authorization: Bearer {token}
+- Body:
+  ```json
+  {
+    "name": "Nama Baru",
+    "phone": "08123456789",
+    "address": "Alamat baru",
+    "currentPassword": "passwordlama", // opsional jika ingin ganti password
+    "newPassword": "passwordbaru" // opsional jika ingin ganti password
+  }
+  ```
+- Response:
+  - Success: 200 OK dengan data profile terbaru
+  - Error: 400 Bad Request jika validasi gagal
+
+### Test Koneksi Database
+- URL: `/api/test-db`
+- Method: GET
+- Response:
+  - Success: 200 OK dengan status koneksi dan data contoh
+  - Error: 500 Internal Server Error jika koneksi gagal
+
+## Variabel Lingkungan (Environment Variables)
+- `DB_HOST` - Host database MySQL
+- `DB_USER` - User database
+- `DB_PASSWORD` - Password database
+- `DB_NAME` - Nama database
+- `DB_PORT` - Port database (default 3306)
+- `JWT_SECRET` - Secret key untuk JWT
+
+## Cara Penggunaan
+1. Jalankan backend dengan `npm run dev`.
+2. Gunakan tools seperti Postman atau frontend untuk mengakses endpoint API.
+3. Sertakan token JWT pada header Authorization untuk endpoint yang membutuhkan autentikasi.
+
+## Lisensi
+Proyek ini menggunakan lisensi MIT.
+
+---
+
+Jika ada pertanyaan atau masalah, silakan hubungi pengembang.
